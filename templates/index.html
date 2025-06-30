@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Review Classifier</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #333;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 15px;
+      margin-top: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      resize: none;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 30px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 18px;
+      color: #333;
+    }
+    .result span {
+      font-weight: bold;
+    }
+    .score-box {
+      display: inline-block;
+      margin: 5px 10px;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Detect Bad Customer Reviews</h2>
+    <form method="post" action="/">
+      <textarea name="review" placeholder="Enter your hotel review here...">{{ review or '' }}</textarea>
+      <br>
+      <button type="submit">Analyze</button>
+    </form>
+
+    {% if prediction is not none %}
+      <div class="result">
+        <p>Model Prediction:
+          <span style="color: {{ 'red' if prediction == 1 else 'green' }}">
+            {{ 'Bad Review' if prediction == 1 else 'Good Review' }}
+          </span>
+        </p>
+
+        {% if sentiment %}
+        <p>Sentiment Scores:</p>
+        <div class="score-box">Positive: {{ sentiment['pos'] }}</div>
+        <div class="score-box">Neutral: {{ sentiment['neu'] }}</div>
+        <div class="score-box">Negative: {{ sentiment['neg'] }}</div>
+        <div class="score-box">Compound: {{ sentiment['compound'] }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
