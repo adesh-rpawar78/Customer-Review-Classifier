@@ -6,3 +6,5 @@ gensim
 matplotlib
 wordcloud
 seaborn
+gunicorn
+python
