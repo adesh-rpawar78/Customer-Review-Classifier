@@ -1,0 +1,12 @@
+flask
+pandas
+nltk
+scikit-learn
+gensim
+matplotlib
+wordcloud
+seaborn
+Flask
+nltk
+mysql-connector-python
+gunicorn
