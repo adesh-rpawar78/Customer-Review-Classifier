@@ -1,0 +1,10 @@
+myenv/
+venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+.ipynb_checkpoints/
+
+Hotel_Reviews.csv
+model.pkl

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Review Analyzer</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        /* Navigation */
+
+        .navbar {
+            background: #111827;
+            padding: 18px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        /* Main */
+
+        .container {
+            max-width: 1000px;
+            margin: 45px auto;
+            padding: 0 25px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        /* Analyzer Card */
+
+        .analyzer-card {
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+        }
+
+        .analyzer-card h2 {
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+
+        .description {
+            color: #6b7280;
+            margin-bottom: 22px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 220px;
+
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+
+            padding: 16px;
+
+            font-family: inherit;
+            font-size: 15px;
+
+            resize: vertical;
+
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .analyze-button {
+            width: 100%;
+            margin-top: 18px;
+
+            padding: 14px;
+
+            border: none;
+            border-radius: 9px;
+
+            background: #2563eb;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .analyze-button:hover {
+            background: #1d4ed8;
+        }
+
+        /* Flash Message */
+
+        .flash {
+            margin-bottom: 20px;
+
+            padding: 14px 18px;
+
+            border-radius: 8px;
+
+            background: #fee2e2;
+            color: #991b1b;
+
+            font-size: 14px;
+        }
+
+        /* Results */
+
+        .result-card {
+            margin-top: 30px;
+
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 30px;
+
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+        }
+
+        .result-card h2 {
+            margin-bottom: 25px;
+        }
+
+        .prediction {
+            padding: 20px;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+            margin-bottom: 25px;
+        }
+
+        .prediction.good {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .prediction.bad {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .prediction-label {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .prediction-value {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        /* Confidence */
+
+        .metric {
+            margin-bottom: 22px;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+
+            margin-bottom: 8px;
+
+            font-size: 14px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 11px;
+
+            background: #e5e7eb;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+
+            border-radius: 10px;
+
+            background: #2563eb;
+        }
+
+        /* Sentiment */
+
+        .sentiment-title {
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .sentiment-grid {
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 15px;
+        }
+
+        .sentiment-box {
+            padding: 20px;
+
+            background: #f8fafc;
+
+            border-radius: 10px;
+
+            text-align: center;
+        }
+
+        .sentiment-label {
+            color: #6b7280;
+
+            font-size: 13px;
+
+            margin-bottom: 8px;
+        }
+
+        .sentiment-value {
+            font-size: 22px;
+
+            font-weight: bold;
+        }
+
+        .positive {
+            color: #16a34a;
+        }
+
+        .neutral {
+            color: #64748b;
+        }
+
+        .negative {
+            color: #dc2626;
+        }
+
+        .compound {
+            color: #6366f1;
+        }
+
+        /* Quick Links */
+
+        .quick-links {
+            display: flex;
+
+            justify-content: center;
+
+            gap: 15px;
+
+            margin-top: 30px;
+        }
+
+        .quick-link {
+            padding: 11px 18px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+        .dashboard-link {
+            background: #111827;
+            color: white;
+        }
+
+        .history-link {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        /* Footer */
+
+        .footer {
+            text-align: center;
+
+            color: #9ca3af;
+
+            font-size: 13px;
+
+            padding: 30px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                flex-direction: column;
+
+                gap: 15px;
+
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                gap: 14px;
+
+                flex-wrap: wrap;
+
+                justify-content: center;
+            }
+
+            .container {
+                margin-top: 30px;
+            }
+
+            .analyzer-card,
+            .result-card {
+                padding: 22px;
+            }
+
+            .header h1 {
+                font-size: 27px;
+            }
+
+            .sentiment-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            .sentiment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-links {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- Navigation -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            Customer Review Analyzer
+        </div>
+
+        <div class="nav-links">
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('history') }}">
+                History
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Main Content -->
+
+    <main class="container">
+
+        <div class="header">
+
+            <h1>
+                Detect Bad Customer Reviews
+            </h1>
+
+            <p>
+                Analyze customer feedback using Machine Learning
+                and Sentiment Analysis.
+            </p>
+
+        </div>
+
+
+        <!-- Flash Messages -->
+
+        {% with messages = get_flashed_messages() %}
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="flash">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- Analyzer -->
+
+        <section class="analyzer-card">
+
+            <h2>
+                Analyze Customer Review
+            </h2>
+
+            <p class="description">
+                Enter a customer review below and let the
+                machine learning model classify it.
+            </p>
+
+
+            <form method="POST">
+
+                <textarea
+                    name="review"
+                    placeholder="Example: The hotel room was clean and comfortable, but the service was slow..."
+                    required
+                >{{ review or "" }}</textarea>
+
+
+                <button
+                    type="submit"
+                    class="analyze-button"
+                >
+                    Analyze Review
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- Results -->
+
+        {% if prediction is not none %}
+
+        <section class="result-card">
+
+            <h2>
+                Analysis Result
+            </h2>
+
+
+            <!-- Prediction -->
+
+            {% if prediction == 1 %}
+
+            <div class="prediction bad">
+
+                <div class="prediction-label">
+                    Machine Learning Prediction
+                </div>
+
+                <div class="prediction-value">
+                    Bad Review
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="prediction good">
+
+                <div class="prediction-label">
+                    Machine Learning Prediction
+                </div>
+
+                <div class="prediction-value">
+                    Good Review
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Confidence -->
+
+            <div class="metric">
+
+                <div class="metric-header">
+
+                    <span>
+                        Model Confidence
+                    </span>
+
+                    <strong>
+                        {{ "%.2f"|format(confidence * 100) }}%
+                    </strong>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-fill"
+                        style="width: {{ confidence * 100 }}%;">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Sentiment -->
+
+            {% if sentiment %}
+
+            <h3 class="sentiment-title">
+                Sentiment Analysis
+            </h3>
+
+
+            <div class="sentiment-grid">
+
+                <div class="sentiment-box">
+
+                    <div class="sentiment-label">
+                        Positive
+                    </div>
+
+                    <div class="sentiment-value positive">
+                        {{ "%.2f"|format(sentiment["pos"] * 100) }}%
+                    </div>
+
+                </div>
+
+
+                <div class="sentiment-box">
+
+                    <div class="sentiment-label">
+                        Neutral
+                    </div>
+
+                    <div class="sentiment-value neutral">
+                        {{ "%.2f"|format(sentiment["neu"] * 100) }}%
+                    </div>
+
+                </div>
+
+
+                <div class="sentiment-box">
+
+                    <div class="sentiment-label">
+                        Negative
+                    </div>
+
+                    <div class="sentiment-value negative">
+                        {{ "%.2f"|format(sentiment["neg"] * 100) }}%
+                    </div>
+
+                </div>
+
+
+                <div class="sentiment-box">
+
+                    <div class="sentiment-label">
+                        Compound
+                    </div>
+
+                    <div class="sentiment-value compound">
+                        {{ "%.3f"|format(sentiment["compound"]) }}
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- Quick Links -->
+
+        <div class="quick-links">
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="quick-link dashboard-link"
+            >
+                View Dashboard
+            </a>
+
+            <a
+                href="{{ url_for('history') }}"
+                class="quick-link history-link"
+            >
+                View History
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <footer class="footer">
+
+        Customer Review Analyzer &copy; 2026
+
+    </footer>
+
+</body>
+
+</html>
